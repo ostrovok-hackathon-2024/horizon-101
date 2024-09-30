@@ -14,7 +14,7 @@ func main() {
 	}
 }
 func f() error {
-	getBatch := MakeGetBatch(csv.NewReader(os.Stdin), 2)
+	getBatch := MakeGetBatch(csv.NewReader(os.Stdin), 1000)
 	doBatch := MakeDoBatch()
 	writeBatch := MakeWriteBatch(csv.NewWriter(os.Stdout))
 	return MakeProcessDocument(getBatch, doBatch, writeBatch)()
@@ -23,8 +23,13 @@ func f() error {
 type ProcessDocument func() error
 
 func MakeProcessDocument(getBatch GetBatch, doBatch DoBatch, writeBatch WriteBatch) ProcessDocument {
+	type Worker struct {
+		Errors  chan error
+		Results chan []OutputRecord
+	}
 	return func() error {
 		var ERR error
+		workers := make([]Worker, 0)
 		for {
 			records, err := getBatch()
 			if err != nil {
@@ -35,13 +40,22 @@ func MakeProcessDocument(getBatch GetBatch, doBatch DoBatch, writeBatch WriteBat
 					return ERR
 				}
 			}
-			outRecords, err := doBatch(records)
+			w := Worker{make(chan error, 1), make(chan []OutputRecord, 1)}
+			go func() {
+				outRecords, err := doBatch(records)
+				w.Errors <- err
+				w.Results <- outRecords
+			}()
+			workers = append(workers, w)
+		}
+		for _, w := range workers {
+			err := <-w.Errors
+			outRecords := <-w.Results
 			if err != nil {
 				ERR = errors.Join(ERR, err)
 				continue
 			}
 			ERR = errors.Join(ERR, writeBatch(outRecords))
-
 		}
 		return ERR
 	}
