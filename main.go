@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/csv"
-	"os"
 	"errors"
 	"io"
 	"log"
+	"os"
 )
 
 func main() {
@@ -17,26 +17,34 @@ func f() error {
 	getBatch := MakeGetBatch(csv.NewReader(os.Stdin), 2)
 	doBatch := MakeDoBatch()
 	writeBatch := MakeWriteBatch(csv.NewWriter(os.Stdout))
-	var ERR error
-	for {
-		records, err := getBatch()
-		if err != nil {
-			if err == io.EOF {
-				break
-			} else {
-				ERR = errors.Join(ERR, err)
-				return ERR
+	return MakeProcessDocument(getBatch, doBatch, writeBatch)()
+}
+
+type ProcessDocument func() error
+
+func MakeProcessDocument(getBatch GetBatch, doBatch DoBatch, writeBatch WriteBatch) ProcessDocument {
+	return func() error {
+		var ERR error
+		for {
+			records, err := getBatch()
+			if err != nil {
+				if err == io.EOF {
+					break
+				} else {
+					ERR = errors.Join(ERR, err)
+					return ERR
+				}
 			}
+			outRecords, err := doBatch(records)
+			if err != nil {
+				ERR = errors.Join(ERR, err)
+				continue
+			}
+			ERR = errors.Join(ERR, writeBatch(outRecords))
+
 		}
-		outRecords, err := doBatch(records)
-		if err != nil {
-			ERR = errors.Join(ERR, err)
-			continue
-		}
-		ERR = errors.Join(ERR, writeBatch(outRecords))
-		
+		return ERR
 	}
-	return ERR
 }
 
 type Record []string
@@ -58,6 +66,7 @@ func MakeGetBatch(r *csv.Reader, batchSize int) GetBatch {
 		return
 	}
 }
+
 type OutputRecord Record
 
 type DoBatch func([]Record) ([]OutputRecord, error)
@@ -84,7 +93,9 @@ func Map[I any, O any](in []I, f func(i I) (o O, err error)) ([]O, error) {
 	}
 	return out, ERR
 }
+
 type WriteBatch func(records []OutputRecord) error
+
 func MakeWriteBatch(w *csv.Writer) WriteBatch {
 	return func(records []OutputRecord) error {
 		out, _ := Map(records, func(i OutputRecord) (o []string, err error) {
