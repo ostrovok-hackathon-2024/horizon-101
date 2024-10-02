@@ -1,0 +1,126 @@
+syntax = "proto3";
+option go_package = "codeberg.org/shinyzero0/ostrovok2024-client/proto";
+service Greeter {
+  // Sends a greeting
+  rpc ProcessBatch (BatchedInput) returns (BatchedOutput) {}
+}
+enum RoomClass {
+	RunOfHouse = 0;
+	Dorm = 1;
+	Capsule = 2;
+	Room = 3;
+	JuniorSuite = 4;
+	Suite = 5;
+	Apartment = 6;
+	Studio = 7;
+	Villa = 8;
+	Cottage = 9;
+	Bungalow = 10;
+	Chalet = 11;
+	Camping = 12;
+}
+enum Quality {
+	UndefinedQuality = 0;
+	Economy = 1;
+	Standard = 2;
+	Comfort = 3;
+	Business = 4;
+	Superior = 5;
+	Deluxe = 6;
+	Premier = 7;
+	Executive = 8;
+	Presidential = 9;
+	Premium = 10;
+	Classic = 11;
+	Ambassador = 12;
+	Grand = 13;
+	Luxury = 14;
+	Platinum = 15;
+	Prestige = 16;
+	Privilege = 17;
+	Royal = 18;
+}
+enum BathroomType {
+	UndefinedBathroom = 0;
+	SharedBathroom = 1;
+	PrivateBathroom = 2;
+	ExternalPrivateBathroom = 3;
+}
+enum BeddingType {
+	UndefinedBedding = 0;
+	BunkBed = 1;
+	SingleBed = 2;
+	DoubleBed = 3;
+	Twin = 4;
+	Multiple = 5;
+}
+enum Capacity {
+	UndefinedCapacity = 0;
+	Single = 1;
+	DoubleCapacity = 2;
+	Triple = 3;
+	Quadruple = 4;
+	Quintuple = 5;
+}
+
+enum View {
+	UndefinedView = 0;
+	BayView = 1;
+	BosphorusView = 2;
+	BurjKhalifaView = 3;
+	CanalView = 4;
+	CityView = 5;
+	CourtyardView = 6;
+	DubaiMarinaView = 7;
+	GardenView = 8;
+	GolfView = 9;
+	HarbourView = 10;
+	InlandView = 11;
+	KremlinView = 12;
+	LakeView = 13;
+	LandView = 14;
+	MountainView = 15;
+	OceanView = 16;
+	PanoramicView = 17;
+	ParkView = 18;
+	PartialOceanView = 19;
+	PartialSeaView = 20;
+	PartialView = 21;
+	PoolView = 22;
+	RiverView = 23;
+	SeaView = 24;
+	SheikhZayedView = 25;
+	StreetView = 26;
+	SunriseView = 27;
+	SunsetView = 28;
+	WaterView = 29;
+	WithView = 30;
+	Beachfront = 31;
+	OceanFront = 32;
+}
+enum Floor {
+	UndefinedFloor = 0;
+	PenthouseFloor = 1;
+	DuplexFloor = 2;
+	BasementFloor = 3;
+	AtticFloor = 4;
+}
+message OutputRecord {
+	BathroomType bathroom = 1;
+	RoomClass class = 2;
+	int32 bedrooms_amount = 3;
+	BeddingType bedding_type = 4;
+	bool has_balcony = 5;
+	View view = 6;
+	Floor floor = 7;
+}
+message BatchedOutput {
+	repeated OutputRecord records = 1;
+}
+message BatchedInput {
+	repeated InputRecord records = 1;
+}
+
+message InputRecord {
+	string description = 1;
+}
