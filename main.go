@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -14,7 +15,7 @@ func main() {
 	}
 }
 func f() error {
-	getBatch := MakeGetBatch(csv.NewReader(os.Stdin), 1000)
+	getBatch := MakeGetBatch(os.Stdin, 1000)
 	doBatch := MakeDoBatch()
 	writeBatch := MakeWriteBatch(csv.NewWriter(os.Stdout))
 	return MakeProcessDocument(getBatch, doBatch, writeBatch)()
@@ -61,34 +62,36 @@ func MakeProcessDocument(getBatch GetBatch, doBatch DoBatch, writeBatch WriteBat
 	}
 }
 
-type Record []string
+type Record string
 
 type GetBatch func() ([]Record, error)
 
-func MakeGetBatch(r *csv.Reader, batchSize int) GetBatch {
+func MakeGetBatch(r io.Reader, batchSize int) GetBatch {
 	return func() (records []Record, err error) {
+		s := bufio.NewScanner(r)
 		for i := 0; i < batchSize; i++ {
-			fields, err := r.Read()
-			if err != nil {
-				if err == io.EOF && i != 0 {
-					return records, nil
+			if s.Scan() {
+				field := s.Text()
+				records = append(records, Record(field))
+			} else {
+				if i == 0 {
+					return records, io.EOF
 				}
-				return records, err
+				return records, nil
 			}
-			records = append(records, fields)
 		}
 		return
 	}
 }
 
-type OutputRecord Record
+type OutputRecord []string
 
 type DoBatch func([]Record) ([]OutputRecord, error)
 
 func MakeDoBatch() DoBatch {
 	return func(records []Record) ([]OutputRecord, error) {
 		return Map(records, func(i Record) (o OutputRecord, err error) {
-			return OutputRecord(i), nil
+			return OutputRecord([]string{string(i)}), nil
 		})
 	}
 }
