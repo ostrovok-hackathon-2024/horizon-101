@@ -14,7 +14,9 @@ func main() {
 	}
 }
 func f() error {
-	getBatch := MakeGetBatch(csv.NewReader(os.Stdin), 2)
+	r := os.Stdin
+	s := csv.NewReader(r)
+	getBatch := MakeGetBatch(s, 1000)
 	doBatch := MakeDoBatch()
 	writeBatch := MakeWriteBatch(csv.NewWriter(os.Stdout))
 	return MakeProcessDocument(getBatch, doBatch, writeBatch)()
