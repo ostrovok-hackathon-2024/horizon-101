@@ -1,6 +1,6 @@
 syntax = "proto3";
 option go_package = "codeberg.org/shinyzero0/ostrovok2024-client/proto";
-service Greeter {
+service Processor {
   // Sends a greeting
   rpc ProcessBatch (BatchedInput) returns (BatchedOutput) {}
 }
