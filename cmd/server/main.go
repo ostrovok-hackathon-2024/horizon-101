@@ -52,7 +52,7 @@ func f() error {
 	}
 	lis, err := net.Listen("tcp", srvu)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		return err
 	}
 	s := grpc.NewServer()
 	proto.RegisterProcessorServer(s, &server{})
