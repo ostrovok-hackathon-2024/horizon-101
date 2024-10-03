@@ -93,7 +93,7 @@ func Map[I any, O any](in []I, f func(i I) (o O, err error)) ([]O, error) {
 		out[k] = o
 		k++
 	}
-	return out, ERR
+	return out[:k], ERR
 }
 
 type WriteBatch func(records []OutputRecord) error
