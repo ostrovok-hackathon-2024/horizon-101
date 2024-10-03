@@ -111,8 +111,11 @@ message OutputRecord {
 	int32 bedrooms_amount = 3;
 	BeddingType bedding_type = 4;
 	bool has_balcony = 5;
+	bool is_club = 8;
 	View view = 6;
 	Floor floor = 7;
+	Capacity capacity = 9;
+	Quality quality = 10;
 }
 message BatchedOutput {
 	repeated OutputRecord records = 1;
