@@ -10,3 +10,5 @@ bin/%: cmd/%/*.go
 	mkdir -p $(@D)
 	go build -o $@ ./$(<D)
 
+clean:
+	rm -rf bin proto/*.go
