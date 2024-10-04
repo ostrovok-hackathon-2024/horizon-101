@@ -7,13 +7,6 @@
 ./bin/client < ./input.csv
 ```
 
-input file must be in the following format:
-
-```csv
-rate_name,class,quality,bathroom,bedding,capacity,club,bedrooms,balcony,view,floor
-deluxe triple room,,,,,,,
-```
-
 ## docker
 
 paste this into posix shell
@@ -22,4 +15,5 @@ paste this into posix shell
 img=$(docker build -q .)
 ctnr=$(docker run -p 7777:7777 -d --rm -q -e SERVER_URI=:7777 $img)
 docker exec -i $ctnr /project/bin/client < ./input.csv
+docker stop $ctnr
 ```
