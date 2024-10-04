@@ -98,9 +98,6 @@ func (s *server) ProcessBatch(_ context.Context, in *proto.BatchedInput) (*proto
 			_, err := utils.Map(s.Matchers, func(m BestMatcher) (*struct{}, error) {
 				return nil, m.Apply(i.Description, o)
 			})
-			if o.Capacity == proto.Capacity_UndefinedCapacity {
-				o.Capacity = proto.Capacity(o.BedroomsAmount)
-			}
 			return o, err
 		},
 	)
@@ -250,14 +247,14 @@ func f() error {
 			Matcher{
 				Query:  bleve.NewQueryStringQuery(`"-not club"`),
 				Action: func(o *proto.OutputRecord) { o.IsClub = true }}}},
-		// capacity
+		// bed
 		BestMatcher{Matchers: []Matcher{
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.BeddingType = proto.BeddingType_Twin },
-				Query:  bleve.NewQueryStringQuery(`+"/2|double|twin/ bed"`)},
+				Query:  bleve.NewQueryStringQuery(`/double|twin/ bed`)},
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.BeddingType = proto.BeddingType_SingleBed },
-				Query:  bleve.NewQueryStringQuery(`+"/1|single/ bed"`)},
+				Query:  bleve.NewQueryStringQuery(`single bed"`)},
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.BeddingType = proto.BeddingType_BunkBed },
 				Query:  bleve.NewQueryStringQuery(`+bunk`)},
