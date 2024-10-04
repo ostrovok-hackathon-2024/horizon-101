@@ -8,11 +8,16 @@ import (
 	"log"
 	"os"
 
+	"flag"
+
 	"codeberg.org/shinyzero0/ostrovok2024-client/proto"
 	. "codeberg.org/shinyzero0/ostrovok2024-client/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+var batchSize = flag.Int("n", 1000, "set batch size")
+var content = flag.String("content", "", "set input file path")
 
 func main() {
 	if err := f(); err != nil {
@@ -20,11 +25,21 @@ func main() {
 	}
 }
 func f() error {
+	flag.Parse()
 	srvu, ok := os.LookupEnv("SERVER_URI")
 	if !ok {
-		return errors.New("fuck")
+		return errors.New("$SERVER_URI undefined")
 	}
-	r := os.Stdin
+	var r io.Reader
+	if *content == "" {
+		r = os.Stdin
+	} else {
+		rdr, err := os.Open(*content)
+		if err != nil {
+			return err
+		}
+		r = rdr
+	}
 	s := csv.NewReader(r)
 	fields, err := s.Read()
 	if err != nil {
@@ -35,7 +50,7 @@ func f() error {
 		fieldMap[v] = k
 	}
 
-	getBatch := MakeGetBatch(s, 1000)
+	getBatch := MakeGetBatch(s, *batchSize)
 	conn, err := grpc.NewClient(srvu, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
@@ -146,6 +161,7 @@ func MakeDoBatch(c proto.ProcessorClient, ctx context.Context, fieldMap map[stri
 		)
 	}
 }
+
 type WriteBatch func(records []OutputRecord) error
 
 func MakeWriteBatch(w *csv.Writer, header []string) WriteBatch {
