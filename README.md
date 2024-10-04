@@ -7,6 +7,13 @@
 ./bin/client < ./input.csv
 ```
 
+input file must be in the following format:
+
+```csv
+rate_name,class,quality,bathroom,bedding,capacity,club,bedrooms,balcony,view,floor
+deluxe triple room,,,,,,,
+```
+
 ## docker
 
 paste this into posix shell
