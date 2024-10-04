@@ -305,21 +305,20 @@ func f() error {
 			viewMatcher(`sea front`, proto.View_SeaFront),
 		}},
 		// floors
-		BestMatcher{Matchers: []Matcher{
-
-			Matcher{
-				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_AtticFloor },
-				Query:  bleve.NewQueryStringQuery(`+attic`)},
-			Matcher{
-				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_PenthouseFloor },
-				Query:  bleve.NewQueryStringQuery(`+penthouse`)},
-			Matcher{
-				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_DuplexFloor },
-				Query:  bleve.NewQueryStringQuery(`+duplex`)},
-			Matcher{
-				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_BasementFloor },
-				Query:  bleve.NewQueryStringQuery(`+basement`)},
-		}},
+		// BestMatcher{Matchers: []Matcher{
+		// 	Matcher{
+		// 		Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_AtticFloor },
+		// 		Query:  bleve.NewQueryStringQuery(`+attic`)},
+		// 	Matcher{
+		// 		Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_PenthouseFloor },
+		// 		Query:  bleve.NewQueryStringQuery(`+penthouse`)},
+		// 	Matcher{
+		// 		Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_DuplexFloor },
+		// 		Query:  bleve.NewQueryStringQuery(`+duplex`)},
+		// 	Matcher{
+		// 		Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_BasementFloor },
+		// 		Query:  bleve.NewQueryStringQuery(`+basement`)},
+		// }},
 	}
 	proto.RegisterProcessorServer(s, &srv)
 	log.Printf("server listening at %v", lis.Addr())
