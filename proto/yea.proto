@@ -98,6 +98,7 @@ enum View {
 	WithView = 30;
 	Beachfront = 31;
 	OceanFront = 32;
+	SeaFront = 33;
 }
 enum Floor {
 	UndefinedFloor = 0;
