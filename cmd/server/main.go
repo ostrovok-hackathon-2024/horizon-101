@@ -92,13 +92,13 @@ func (s *server) ProcessBatch(_ context.Context, in *proto.BatchedInput) (*proto
 				IsClub:         false,
 				View:           proto.View_UndefinedView,
 				Floor:          proto.Floor_UndefinedFloor,
-				Capacity:       proto.Capacity_DoubleCapacity,
+				Capacity:       proto.Capacity_UndefinedCapacity,
 				Quality:        proto.Quality_Standard,
 			}
 			_, err := utils.Map(s.Matchers, func(m BestMatcher) (*struct{}, error) {
 				return nil, m.Apply(i.Description, o)
 			})
-			if o.Capacity == 0 {
+			if o.Capacity == proto.Capacity_UndefinedCapacity {
 				o.Capacity = proto.Capacity(o.BedroomsAmount)
 			}
 			return o, err
