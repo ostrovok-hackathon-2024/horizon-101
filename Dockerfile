@@ -1,8 +1,11 @@
 FROM golang:1.23.2
 
+RUN apt-get update
+RUN apt-get install -y protobuf-compiler
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest 
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
 ADD . /project
 WORKDIR /project
 RUN make
-EXPOSE 8080
-ENTRYPOINT ["/project/bin/client"]
-
+ENTRYPOINT ["/project/bin/server"]
