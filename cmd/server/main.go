@@ -260,7 +260,7 @@ func f() error {
 				Query:  bleve.NewQueryStringQuery(`+bunk`)},
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.BeddingType = proto.BeddingType_Multiple },
-				Query:  bleve.NewQueryStringQuery(`+"/3|4|triple|multiple/ bed" -room`)},
+				Query:  bleve.NewQueryStringQuery(`/triple|multiple/ bed`)},
 		},
 		},
 		BestMatcher{Matchers: []Matcher{
@@ -297,7 +297,7 @@ func f() error {
 			viewMatcher(`sunrise view`, proto.View_SunriseView),
 			viewMatcher(`sunset view`, proto.View_SunsetView),
 			viewMatcher(`/water|fountain|creek|waterfront|/ view`, proto.View_WaterView),
-			viewMatcher(`view`, proto.View_WithView),
+			viewMatcher(`with view`, proto.View_WithView),
 			viewMatcher(`beach front`, proto.View_Beachfront),
 			viewMatcher(`sea front`, proto.View_SeaFront),
 		}},
