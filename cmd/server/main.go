@@ -24,6 +24,7 @@ type Matchers []Matcher
 
 func (ms Matchers) Apply(s string, rec *proto.OutputRecord) error {
 	mp := bleve.NewIndexMapping()
+	mp.DefaultAnalyzer = "en"
 	index, err := bleve.NewMemOnly(mp)
 	if err != nil {
 		return err
@@ -129,13 +130,10 @@ func f() error {
 		BestMatcher{Matchers: []Matcher{
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.Capacity = 2 },
-				Query:  bleve.NewQueryStringQuery(`+/2|double|twin/ -"/2|double/ bed" room`)},
-			Matcher{
-				Action: func(o *proto.OutputRecord) { o.Capacity = 2 },
-				Query:  bleve.NewQueryStringQuery(`+/2|double|twin/ -"/2|double/ bed" room`)},
+				Query:  bleve.NewQueryStringQuery(`+/single|one/ -"/2|double/ bed" room`)},
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.Capacity = 3 },
-				Query:  bleve.NewQueryStringQuery(`+/3|triple/ -"/3|triple/ bed" room`)},
+				Query:  bleve.NewQueryStringQuery(`+/3|triple|three/ -"/3|triple/ bed" room`)},
 			Matcher{
 				Action: func(o *proto.OutputRecord) { o.Capacity = 4 },
 				Query:  bleve.NewQueryStringQuery(`+/4|quadruple/ -"/4|quadruple/ bed" room`)},
@@ -155,8 +153,11 @@ func f() error {
 				Query:  bleve.NewQueryStringQuery(`+"run of house"`),
 				Action: func(o *proto.OutputRecord) { o.Class = proto.RoomClass_RunOfHouse }},
 			Matcher{
-				Query:  bleve.NewQueryStringQuery(`dorm dormitory dormbed`),
-				Action: func(o *proto.OutputRecord) { o.Class = proto.RoomClass_Dorm }},
+				Query: bleve.NewQueryStringQuery(`dorm dormitory dormbed`),
+				Action: func(o *proto.OutputRecord) {
+					o.Class = proto.RoomClass_Dorm
+					o.Bathroom = proto.BathroomType_SharedBathroom
+				}},
 			Matcher{
 				Query:  bleve.NewQueryStringQuery(`+capsule`),
 				Action: func(o *proto.OutputRecord) { o.Class = proto.RoomClass_Capsule }},
@@ -266,6 +267,11 @@ func f() error {
 		},
 		},
 		BestMatcher{Matchers: []Matcher{
+			Matcher{
+				Action: func(o *proto.OutputRecord) { o.Bathroom = proto.BathroomType_SharedBathroom },
+				Query:  bleve.NewQueryStringQuery(`+shared bathroom`)},
+		}},
+		BestMatcher{Matchers: []Matcher{
 			viewMatcher(`bay`, proto.View_BayView),
 			viewMatcher(`bosphorus`, proto.View_BosphorusView),
 			viewMatcher(`burj-khalifa`, proto.View_BurjKhalifaView),
@@ -282,6 +288,37 @@ func f() error {
 			viewMatcher(`land`, proto.View_LandView),
 			viewMatcher(`mountain`, proto.View_MountainView),
 			viewMatcher(`ocean`, proto.View_OceanView),
+			viewMatcher(`panoramic`, proto.View_PanoramicView),
+			viewMatcher(`park`, proto.View_ParkView),
+			viewMatcher(`partial ocean`, proto.View_PartialOceanView),
+			viewMatcher(`partial sea`, proto.View_PartialSeaView),
+			viewMatcher(`pool`, proto.View_PoolView),
+			viewMatcher(`river`, proto.View_RiverView),
+			viewMatcher(`sea`, proto.View_SeaView),
+			viewMatcher(`sheikh-zayed`, proto.View_SheikhZayedView),
+			viewMatcher(`street view`, proto.View_StreetView),
+			viewMatcher(`sunrise view`, proto.View_SunriseView),
+			viewMatcher(`sunset view`, proto.View_SunsetView),
+			viewMatcher(`/water|fountain|creek|waterfront|/ view`, proto.View_WaterView),
+			viewMatcher(`view`, proto.View_WithView),
+			viewMatcher(`beach front`, proto.View_Beachfront),
+			viewMatcher(`sea front`, proto.View_SeaFront),
+		}},
+		// floors
+		BestMatcher{Matchers: []Matcher{
+
+			Matcher{
+				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_AtticFloor },
+				Query:  bleve.NewQueryStringQuery(`+attic`)},
+			Matcher{
+				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_PenthouseFloor },
+				Query:  bleve.NewQueryStringQuery(`+penthouse`)},
+			Matcher{
+				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_DuplexFloor },
+				Query:  bleve.NewQueryStringQuery(`+duplex`)},
+			Matcher{
+				Action: func(o *proto.OutputRecord) { o.Floor = proto.Floor_BasementFloor },
+				Query:  bleve.NewQueryStringQuery(`+basement`)},
 		}},
 	}
 	proto.RegisterProcessorServer(s, &srv)
