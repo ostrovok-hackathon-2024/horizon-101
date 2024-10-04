@@ -1,2 +1,2 @@
-proto/*.go
+proto
 bin
