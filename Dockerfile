@@ -8,4 +8,4 @@ RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ADD . /project
 WORKDIR /project
 RUN make
-ENTRYPOINT ["/project/bin/server"]
+ENTRYPOINT ["/project/entrypoint.sh"]
