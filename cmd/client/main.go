@@ -41,10 +41,11 @@ func f() error {
 		r = rdr
 	}
 	s := csv.NewReader(r)
-	fields, err := s.Read()
+	_, err := s.Read()
 	if err != nil {
 		return err
 	}
+	fields := []string{"rate_name","class","quality","bathroom","bedding","capacity","club","balcony","view"}
 	fieldMap := make(map[string]int, len(fields))
 	for k, v := range fields {
 		fieldMap[v] = k
@@ -123,10 +124,8 @@ func MakeDoBatch(c proto.ProcessorClient, ctx context.Context, fieldMap map[stri
 	bedding := fieldMap["bedding"]
 	capacity := fieldMap["capacity"]
 	club := fieldMap["club"]
-	bedrooms := fieldMap["bedrooms"]
 	balcony := fieldMap["balcony"]
 	view := fieldMap["view"]
-	floor := fieldMap["floor"]
 	return func(records []Record) ([]OutputRecord, error) {
 		inputs, _ := Map(records, func(i Record) (o *proto.InputRecord, err error) {
 			return &proto.InputRecord{
@@ -146,11 +145,9 @@ func MakeDoBatch(c proto.ProcessorClient, ctx context.Context, fieldMap map[stri
 			func(i *proto.OutputRecord, idx int) (o OutputRecord, err error) {
 				o = make(OutputRecord, len(fieldMap))
 				o[bedding] = BeddingType(i.BeddingType).String()
-				o[floor] = Floor(i.Floor).String()
 				o[club] = Club(i.IsClub).String()
 				o[view] = View(i.View).String()
 				o[capacity] = Capacity(i.Capacity).String()
-				o[bedrooms] = Bedrooms(i.BedroomsAmount).String()
 				o[balcony] = Balcony(i.HasBalcony).String()
 				o[class] = RoomClass(i.Class).String()
 				o[bathroom] = BathroomType(i.Bathroom).String()
