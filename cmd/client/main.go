@@ -115,7 +115,7 @@ func MakeDoBatch(c proto.ProcessorClient, ctx context.Context, fieldMap map[stri
 	return func(records []Record) ([]OutputRecord, error) {
 		inputs, _ := Map(records, func(i Record) (o *proto.InputRecord, err error) {
 			return &proto.InputRecord{
-				Description: string(i[0]),
+				Description: string(i[rate_name]),
 			}, nil
 		})
 
