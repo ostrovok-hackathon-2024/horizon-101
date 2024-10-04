@@ -137,6 +137,7 @@ const (
 	RoomClass_Bungalow    RoomClass = 10
 	RoomClass_Chalet      RoomClass = 11
 	RoomClass_Camping     RoomClass = 12
+	RoomClass_Tent     RoomClass = 13
 )
 
 func (r RoomClass) String() string {
@@ -167,6 +168,8 @@ func (r RoomClass) String() string {
 		return "chalet"
 	case RoomClass_Camping:
 		return "camping"
+	case RoomClass_Tent:
+		return "tent"
 	default:
 		return "unknown"
 	}

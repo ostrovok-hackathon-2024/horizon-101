@@ -18,6 +18,7 @@ enum RoomClass {
 	Bungalow = 10;
 	Chalet = 11;
 	Camping = 12;
+	Tent = 13;
 }
 enum Quality {
 	UndefinedQuality = 0;
